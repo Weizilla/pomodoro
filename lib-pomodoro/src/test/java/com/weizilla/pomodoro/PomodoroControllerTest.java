@@ -53,4 +53,15 @@ public class PomodoroControllerTest
 
         verify(listener, times(2)).tick();
     }
+
+    @Test
+    public void controllerCallsTimerToStop() throws Exception
+    {
+        CycleTimer cycleTimer = mock(CycleTimer.class);
+        PomodoroController controller = new PomodoroController(cycleTimer);
+
+        controller.stopCycle();
+
+        verify(cycleTimer).stopCycle();
+    }
 }

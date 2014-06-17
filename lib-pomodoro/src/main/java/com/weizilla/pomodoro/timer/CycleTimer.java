@@ -7,4 +7,6 @@ public interface CycleTimer
     void startCycle(TimeUnit timeUnit);
 
     void addTickListener(TickListener listener);
+
+    void stopCycle();
 }

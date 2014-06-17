@@ -21,6 +21,13 @@ public class CycleTimerStub implements CycleTimer
         listeners.add(listener);
     }
 
+    @Override
+    public void stopCycle()
+    {
+        //TODO Auto-generated
+
+    }
+
     public void tick()
     {
         for (TickListener listener : listeners)

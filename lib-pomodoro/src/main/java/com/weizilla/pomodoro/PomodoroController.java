@@ -19,4 +19,9 @@ public class PomodoroController
         cycleTimer.addTickListener(listener);
         cycleTimer.startCycle(timeUnit);
     }
+
+    public void stopCycle()
+    {
+        cycleTimer.stopCycle();
+    }
 }

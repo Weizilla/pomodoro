@@ -3,12 +3,14 @@ package com.weizilla.pomodoro.timer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultCycleTimer implements CycleTimer, Runnable
 {
     protected final List<TickListener> listeners = new ArrayList<>();
     private final ScheduledExecutorService service;
+    protected ScheduledFuture<?> future;
 
     public DefaultCycleTimer(ScheduledExecutorService service)
     {
@@ -18,7 +20,7 @@ public class DefaultCycleTimer implements CycleTimer, Runnable
     @Override
     public void startCycle(TimeUnit timeUnit)
     {
-        service.scheduleAtFixedRate(this, 0, 1, timeUnit);
+        future = service.scheduleAtFixedRate(this, 0, 1, timeUnit);
     }
 
     @Override
@@ -39,5 +41,15 @@ public class DefaultCycleTimer implements CycleTimer, Runnable
     public void addTickListener(TickListener listener)
     {
         listeners.add(listener);
+    }
+
+    @Override
+    public void stopCycle()
+    {
+        if (future != null)
+        {
+            future.cancel(false);
+            future = null;
+        }
     }
 }
