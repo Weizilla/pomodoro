@@ -94,8 +94,35 @@ public class Frame extends JFrame
         systemTray = SystemTray.getSystemTray();
         trayIcon = new TrayIcon(image);
         trayIcon.setImageAutoSize(true);
+        trayIcon.setPopupMenu(createMenu());
         systemTray.add(trayIcon);
         refreshTray();
+    }
+
+    private PopupMenu createMenu()
+    {
+        PopupMenu menu = new PopupMenu();
+        MenuItem start = new MenuItem("Start");
+        start.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("start");
+            }
+        });
+        menu.add(start);
+        MenuItem stop = new MenuItem("Stop");
+        stop.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("stop");
+            }
+        });
+        menu.add(stop);
+        return menu;
     }
 
     private void refreshTray()

@@ -17,8 +17,8 @@ public class ConsoleApp
 
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         DefaultCycleTimer timer = new DefaultCycleTimer(executorService);
-        final PomodoroController controller = new PomodoroController(timer);
-        controller.startCycle(TimeUnit.SECONDS, new TickListener()
+        final PomodoroController controller = PomodoroController.createController(timer);
+        controller.addTickListener(new TickListener()
         {
             @Override
             public void tick()
@@ -31,5 +31,6 @@ public class ConsoleApp
                 }
             }
         });
+        controller.startCycle(TimeUnit.SECONDS);
     }
 }

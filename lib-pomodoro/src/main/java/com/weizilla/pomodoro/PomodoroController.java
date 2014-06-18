@@ -3,25 +3,48 @@ package com.weizilla.pomodoro;
 import com.weizilla.pomodoro.timer.CycleTimer;
 import com.weizilla.pomodoro.timer.TickListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class PomodoroController
+public class PomodoroController implements TickListener
 {
-    private CycleTimer cycleTimer;
+    private final CycleTimer cycleTimer;
+    protected final List<TickListener> listeners = new ArrayList<>();
 
-    public PomodoroController(CycleTimer cycleTimer)
+    private PomodoroController(CycleTimer cycleTimer)
     {
         this.cycleTimer = cycleTimer;
     }
 
-    public void startCycle(TimeUnit timeUnit, TickListener listener)
+    public static PomodoroController createController(CycleTimer cycleTimer)
     {
-        cycleTimer.addTickListener(listener);
+        PomodoroController controller = new PomodoroController(cycleTimer);
+        cycleTimer.addTickListener(controller);
+        return controller;
+    }
+
+    public void startCycle(TimeUnit timeUnit)
+    {
         cycleTimer.startCycle(timeUnit);
     }
 
     public void stopCycle()
     {
         cycleTimer.stopCycle();
+    }
+
+    public void addTickListener(TickListener listener)
+    {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void tick()
+    {
+        for (TickListener listener : listeners)
+        {
+            listener.tick();
+        }
     }
 }

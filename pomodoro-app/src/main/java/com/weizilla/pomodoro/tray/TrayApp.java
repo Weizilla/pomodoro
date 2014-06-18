@@ -5,6 +5,8 @@ import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 import com.weizilla.pomodoro.timer.TickListener;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,12 +19,18 @@ public class TrayApp implements TickListener
     private TrayIcon trayIcon;
     private int count;
 
-    public TrayApp(PomodoroController controller)
+    private TrayApp(PomodoroController controller)
     {
         this.controller = controller;
 
         createTray();
-        start();
+        drawNumber(0);
+    }
+
+    public static void startApplication(PomodoroController controller)
+    {
+        TrayApp trayApp = new TrayApp(controller);
+        controller.addTickListener(trayApp);
     }
 
     private void createTray()
@@ -32,6 +40,7 @@ public class TrayApp implements TickListener
         SystemTray systemTray = SystemTray.getSystemTray();
         trayIcon = new TrayIcon(image);
         trayIcon.setImageAutoSize(true);
+        trayIcon.setPopupMenu(createMenu());
         try
         {
             systemTray.add(trayIcon);
@@ -42,20 +51,53 @@ public class TrayApp implements TickListener
         }
     }
 
+    private PopupMenu createMenu()
+    {
+        PopupMenu menu = new PopupMenu();
+
+        MenuItem start = new MenuItem("Start");
+        start.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                start();
+            }
+        });
+        menu.add(start);
+
+        MenuItem stop = new MenuItem("Stop");
+        stop.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                stop();
+            }
+        });
+        menu.add(stop);
+
+        return menu;
+    }
+
     private void start()
     {
         count = 0;
-        controller.startCycle(TimeUnit.SECONDS, this);
+        controller.startCycle(TimeUnit.SECONDS);
+    }
+
+    private void stop()
+    {
+        controller.stopCycle();
     }
 
     @Override
     public void tick()
     {
-        count++;
-        refreshImage();
+        drawNumber(++count);
     }
 
-    private void refreshImage()
+    private void drawNumber(int num)
     {
         Graphics2D g2d = image.createGraphics();
         g2d.setBackground(new Color(0, 0, 0, 0));
@@ -65,7 +107,7 @@ public class TrayApp implements TickListener
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setPaint(Color.black);
         g2d.setFont(new Font("SansSerif", Font.BOLD, 15));
-        g2d.drawString(String.valueOf(count), 0, 12);
+        g2d.drawString(String.valueOf(num), 0, 12);
         g2d.dispose();
 
         trayIcon.setImage(image);
@@ -75,7 +117,8 @@ public class TrayApp implements TickListener
     {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         DefaultCycleTimer timer = new DefaultCycleTimer(executorService);
-        PomodoroController controller = new PomodoroController(timer);
-        new TrayApp(controller);
+        PomodoroController controller = PomodoroController.createController(timer);
+        startApplication(controller);
+
     }
 }
