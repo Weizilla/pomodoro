@@ -77,6 +77,17 @@ public class TrayApp implements TickListener
         });
         menu.add(stop);
 
+        MenuItem quit = new MenuItem("Quit");
+        quit.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+        menu.add(quit);
+
         return menu;
     }
 
