@@ -24,8 +24,9 @@ public class PomodoroController implements TickListener
         return controller;
     }
 
-    public void startCycle(TimeUnit timeUnit)
+    public void startCycle(Cycle cycle)
     {
+        TimeUnit timeUnit = cycle.getTimeUnit();
         cycleTimer.startCycle(timeUnit);
     }
 

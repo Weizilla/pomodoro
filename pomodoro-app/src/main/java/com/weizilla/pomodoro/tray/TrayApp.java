@@ -1,5 +1,6 @@
 package com.weizilla.pomodoro.tray;
 
+import com.weizilla.pomodoro.Cycle;
 import com.weizilla.pomodoro.PomodoroController;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 import com.weizilla.pomodoro.timer.TickListener;
@@ -94,7 +95,7 @@ public class TrayApp implements TickListener
     private void start()
     {
         count = 0;
-        controller.startCycle(TimeUnit.SECONDS);
+        controller.startCycle(new Cycle(TimeUnit.SECONDS));
     }
 
     private void stop()

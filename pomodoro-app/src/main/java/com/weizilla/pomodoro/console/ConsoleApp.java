@@ -1,5 +1,6 @@
 package com.weizilla.pomodoro.console;
 
+import com.weizilla.pomodoro.Cycle;
 import com.weizilla.pomodoro.PomodoroController;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 import com.weizilla.pomodoro.timer.TickListener;
@@ -31,6 +32,6 @@ public class ConsoleApp
                 }
             }
         });
-        controller.startCycle(TimeUnit.SECONDS);
+        controller.startCycle(new Cycle(TimeUnit.SECONDS));
     }
 }

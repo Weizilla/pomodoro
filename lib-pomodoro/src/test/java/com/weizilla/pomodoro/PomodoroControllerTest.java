@@ -19,7 +19,8 @@ public class PomodoroControllerTest
         PomodoroController controller = PomodoroController.createController(cycleTimer);
 
         TimeUnit timeUnit = TimeUnit.MINUTES;
-        controller.startCycle(timeUnit);
+        Cycle cycle = new Cycle(timeUnit);
+        controller.startCycle(cycle);
 
         verify(cycleTimer).startCycle(timeUnit);
     }
