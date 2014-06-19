@@ -95,7 +95,7 @@ public class TrayApp implements TickListener
     private void start()
     {
         count = 0;
-        controller.startCycle(new Cycle(TimeUnit.SECONDS));
+        controller.startCycle(new Cycle(25, TimeUnit.SECONDS));
     }
 
     private void stop()

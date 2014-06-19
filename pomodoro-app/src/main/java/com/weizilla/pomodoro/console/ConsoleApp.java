@@ -32,6 +32,6 @@ public class ConsoleApp
                 }
             }
         });
-        controller.startCycle(new Cycle(TimeUnit.SECONDS));
+        controller.startCycle(new Cycle(25, TimeUnit.SECONDS));
     }
 }

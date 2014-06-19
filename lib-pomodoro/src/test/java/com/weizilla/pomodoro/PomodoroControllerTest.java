@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class PomodoroControllerTest
@@ -19,10 +20,23 @@ public class PomodoroControllerTest
         PomodoroController controller = PomodoroController.createController(cycleTimer);
 
         TimeUnit timeUnit = TimeUnit.MINUTES;
-        Cycle cycle = new Cycle(timeUnit);
+        Cycle cycle = new Cycle(0, timeUnit);
         controller.startCycle(cycle);
 
         verify(cycleTimer).startCycle(timeUnit);
+    }
+
+    @Test
+    public void addCycleEndListener() throws Exception
+    {
+        CycleTimer cycleTimer = mock(CycleTimer.class);
+        PomodoroController controller = PomodoroController.createController(cycleTimer);
+
+        CycleEndListener listener = mock(CycleEndListener.class);
+
+        controller.addCycleEndListener(listener);
+
+        assertTrue(controller.cycleEndListeners.contains(listener));
     }
 
     @Test
@@ -35,7 +49,7 @@ public class PomodoroControllerTest
 
         controller.addTickListener(listener);
 
-        assertTrue(controller.listeners.contains(listener));
+        assertTrue(controller.tickListeners.contains(listener));
     }
 
     @Test
@@ -69,5 +83,25 @@ public class PomodoroControllerTest
         PomodoroController controller = PomodoroController.createController(cycleTimer);
 
         verify(cycleTimer).addTickListener(controller);
+    }
+
+    @Test
+    public void countsDownAndCallsCycleEndListener() throws Exception
+    {
+        int numTicks = 10;
+        PomodoroController controller = PomodoroController.createController(mock(CycleTimer.class));
+        CycleEndListener cycleEndListener = mock(CycleEndListener.class);
+        controller.addCycleEndListener(cycleEndListener);
+        controller.startCycle(new Cycle(numTicks, TimeUnit.SECONDS));
+
+        for (int i = 0; i < numTicks - 1; i++)
+        {
+            controller.tick();
+        }
+        verify(cycleEndListener, never()).cycleEnd();
+
+        controller.tick();
+
+        verify(cycleEndListener).cycleEnd();
     }
 }

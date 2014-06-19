@@ -10,7 +10,9 @@ import java.util.concurrent.TimeUnit;
 public class PomodoroController implements TickListener
 {
     private final CycleTimer cycleTimer;
-    protected final List<TickListener> listeners = new ArrayList<>();
+    protected final List<TickListener> tickListeners = new ArrayList<>();
+    protected final List<CycleEndListener> cycleEndListeners = new ArrayList<>();
+    private int remainingTicks;
 
     private PomodoroController(CycleTimer cycleTimer)
     {
@@ -27,6 +29,7 @@ public class PomodoroController implements TickListener
     public void startCycle(Cycle cycle)
     {
         TimeUnit timeUnit = cycle.getTimeUnit();
+        remainingTicks = cycle.getNumTicks();
         cycleTimer.startCycle(timeUnit);
     }
 
@@ -37,15 +40,39 @@ public class PomodoroController implements TickListener
 
     public void addTickListener(TickListener listener)
     {
-        listeners.add(listener);
+        tickListeners.add(listener);
+    }
+
+    public void addCycleEndListener(CycleEndListener listener)
+    {
+        cycleEndListeners.add(listener);
     }
 
     @Override
     public void tick()
     {
-        for (TickListener listener : listeners)
+        notifyTickListeners();
+        remainingTicks--;
+        if (remainingTicks == 0)
+        {
+            notifyCycleEndListeners();
+            //TODO activiate next cycle
+        }
+    }
+
+    private void notifyTickListeners()
+    {
+        for (TickListener listener : tickListeners)
         {
             listener.tick();
+        }
+    }
+
+    private void notifyCycleEndListeners()
+    {
+        for (CycleEndListener listener : cycleEndListeners)
+        {
+            listener.cycleEnd();
         }
     }
 }
