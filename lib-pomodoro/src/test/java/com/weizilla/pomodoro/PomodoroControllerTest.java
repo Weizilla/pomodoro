@@ -22,7 +22,7 @@ public class PomodoroControllerTest
         PomodoroController controller = PomodoroController.createController(cycleTimer);
 
         TimeUnit timeUnit = TimeUnit.MINUTES;
-        Cycle cycle = new Cycle(0, timeUnit);
+        Cycle cycle = new Cycle(Cycle.Type.WORK, 0, timeUnit);
         controller.startCycle(cycle);
 
         verify(cycleTimer).startCycle(timeUnit);
@@ -73,7 +73,7 @@ public class PomodoroControllerTest
         PomodoroController controller = PomodoroController.createController(mock(CycleTimer.class));
         controller.addCycleTickListener(listener);
 
-        controller.startCycle(new Cycle(10, TimeUnit.MINUTES));
+        controller.startCycle(new Cycle(Cycle.Type.WORK, 10, TimeUnit.MINUTES));
 
         for (int i = 9; i >= 0; i--)
         {
@@ -98,7 +98,7 @@ public class PomodoroControllerTest
         PomodoroController controller = PomodoroController.createController(mock(CycleTimer.class));
         CycleEndListener cycleEndListener = mock(CycleEndListener.class);
         controller.addCycleEndListener(cycleEndListener);
-        controller.startCycle(new Cycle(numTicks, TimeUnit.SECONDS));
+        controller.startCycle(new Cycle(Cycle.Type.WORK, numTicks, TimeUnit.SECONDS));
 
         for (int i = 0; i < numTicks - 1; i++)
         {
