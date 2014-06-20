@@ -1,7 +1,7 @@
 package com.weizilla.pomodoro.tray;
 
-import com.weizilla.pomodoro.Cycle;
-import com.weizilla.pomodoro.CycleTickListener;
+import com.weizilla.pomodoro.cycle.Cycle;
+import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.PomodoroController;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 

@@ -1,5 +1,8 @@
 package com.weizilla.pomodoro;
 
+import com.weizilla.pomodoro.cycle.Cycle;
+import com.weizilla.pomodoro.cycle.CycleEndListener;
+import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.timer.CycleTimer;
 import org.junit.Test;
 

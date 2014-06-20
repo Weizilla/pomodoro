@@ -1,4 +1,4 @@
-package com.weizilla.pomodoro;
+package com.weizilla.pomodoro.cycle;
 
 import java.util.concurrent.TimeUnit;
 
