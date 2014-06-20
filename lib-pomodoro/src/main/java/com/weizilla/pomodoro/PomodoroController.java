@@ -12,26 +12,27 @@ import java.util.concurrent.TimeUnit;
 
 public class PomodoroController implements TickListener
 {
-    private final CycleTimer cycleTimer;
     protected final List<CycleTickListener> cycleTickListeners = new ArrayList<>();
     protected final List<CycleEndListener> cycleEndListeners = new ArrayList<>();
+    private final CycleTimer cycleTimer;
+    private final TimeUnit timeUnit;
     private int ticksRemaining;
 
-    private PomodoroController(CycleTimer cycleTimer)
+    private PomodoroController(CycleTimer cycleTimer, TimeUnit timeUnit)
     {
         this.cycleTimer = cycleTimer;
+        this.timeUnit = timeUnit;
     }
 
-    public static PomodoroController createController(CycleTimer cycleTimer)
+    public static PomodoroController createController(CycleTimer cycleTimer, TimeUnit timeUnit)
     {
-        PomodoroController controller = new PomodoroController(cycleTimer);
+        PomodoroController controller = new PomodoroController(cycleTimer, timeUnit);
         cycleTimer.addTickListener(controller);
         return controller;
     }
 
     public void startCycle(Cycle cycle)
     {
-        TimeUnit timeUnit = cycle.getTimeUnit();
         ticksRemaining = cycle.getNumTicks();
         cycleTimer.startCycle(timeUnit);
     }

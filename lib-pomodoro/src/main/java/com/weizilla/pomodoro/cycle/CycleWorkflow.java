@@ -1,21 +1,17 @@
 package com.weizilla.pomodoro.cycle;
 
-import java.util.concurrent.TimeUnit;
-
 public class CycleWorkflow
 {
     private int numWorkTicks;
     private int numBreakTicks;
     private int numLongBreakTicks;
-    private TimeUnit timeUnit;
     private int numBreaks;
 
-    public CycleWorkflow(int numWorkTicks, int numBreakTicks, int numLongBreakTicks, TimeUnit timeUnit)
+    public CycleWorkflow(int numWorkTicks, int numBreakTicks, int numLongBreakTicks)
     {
         this.numWorkTicks = numWorkTicks;
         this.numBreakTicks = numBreakTicks;
         this.numLongBreakTicks = numLongBreakTicks;
-        this.timeUnit = timeUnit;
     }
 
     public Cycle getNextCycle(Cycle cycle)
@@ -27,7 +23,7 @@ public class CycleWorkflow
             case BREAK:
                 // fall through
             case LONG_BREAK:
-                return new Cycle(Cycle.Type.WORK, numWorkTicks, timeUnit);
+                return new Cycle(Cycle.Type.WORK, numWorkTicks);
             default:
                 throw new IllegalArgumentException("Unknown cycle type: " + cycle.getType());
         }
@@ -38,12 +34,12 @@ public class CycleWorkflow
         if (numBreaks == 3)
         {
             numBreaks = 0;
-            return new Cycle(Cycle.Type.LONG_BREAK, numLongBreakTicks, timeUnit);
+            return new Cycle(Cycle.Type.LONG_BREAK, numLongBreakTicks);
         }
         else
         {
             numBreaks++;
-            return new Cycle(Cycle.Type.BREAK, numBreakTicks, timeUnit);
+            return new Cycle(Cycle.Type.BREAK, numBreakTicks);
         }
     }
 }

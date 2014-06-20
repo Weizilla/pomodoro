@@ -4,6 +4,7 @@ import com.weizilla.pomodoro.cycle.Cycle;
 import com.weizilla.pomodoro.cycle.CycleEndListener;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.timer.CycleTimer;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -15,25 +16,28 @@ import static org.mockito.Mockito.verify;
 
 public class PomodoroControllerTest
 {
+    private static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
+    private CycleTimer mockCycleTimer;
+    private PomodoroController controller;
+
+    @Before
+    public void setUp() throws Exception
+    {
+        mockCycleTimer = mock(CycleTimer.class);
+        controller = PomodoroController.createController(mockCycleTimer, TIME_UNIT);
+    }
+
     @Test
     public void controllerCallsTimerToStart() throws Exception
     {
-        CycleTimer cycleTimer = mock(CycleTimer.class);
-        PomodoroController controller = PomodoroController.createController(cycleTimer);
+        controller.startCycle(new Cycle(Cycle.Type.WORK, 10));
 
-        TimeUnit timeUnit = TimeUnit.MINUTES;
-        Cycle cycle = new Cycle(Cycle.Type.WORK, 0, timeUnit);
-        controller.startCycle(cycle);
-
-        verify(cycleTimer).startCycle(timeUnit);
+        verify(mockCycleTimer).startCycle(TIME_UNIT);
     }
 
     @Test
     public void addCycleEndListener() throws Exception
     {
-        CycleTimer cycleTimer = mock(CycleTimer.class);
-        PomodoroController controller = PomodoroController.createController(cycleTimer);
-
         CycleEndListener listener = mock(CycleEndListener.class);
 
         controller.addCycleEndListener(listener);
@@ -44,9 +48,6 @@ public class PomodoroControllerTest
     @Test
     public void addCycleTickListener() throws Exception
     {
-        CycleTimer cycleTimer = mock(CycleTimer.class);
-        PomodoroController controller = PomodoroController.createController(cycleTimer);
-
         CycleTickListener listener = mock(CycleTickListener.class);
 
         controller.addCycleTickListener(listener);
@@ -57,23 +58,18 @@ public class PomodoroControllerTest
     @Test
     public void controllerCallsTimerToStop() throws Exception
     {
-        CycleTimer cycleTimer = mock(CycleTimer.class);
-        PomodoroController controller = PomodoroController.createController(cycleTimer);
-
         controller.stopCycle();
 
-        verify(cycleTimer).stopCycle();
+        verify(mockCycleTimer).stopCycle();
     }
 
     @Test
     public void tickNotifiesListenersWithRemainingTime() throws Exception
     {
         CycleTickListener listener = mock(CycleTickListener.class);
-
-        PomodoroController controller = PomodoroController.createController(mock(CycleTimer.class));
         controller.addCycleTickListener(listener);
 
-        controller.startCycle(new Cycle(Cycle.Type.WORK, 10, TimeUnit.MINUTES));
+        controller.startCycle(new Cycle(Cycle.Type.WORK, 10));
 
         for (int i = 9; i >= 0; i--)
         {
@@ -85,20 +81,16 @@ public class PomodoroControllerTest
     @Test
     public void addsControllerToCycleTimerAsTickListener() throws Exception
     {
-        CycleTimer cycleTimer = mock(CycleTimer.class);
-        PomodoroController controller = PomodoroController.createController(cycleTimer);
-
-        verify(cycleTimer).addTickListener(controller);
+        verify(mockCycleTimer).addTickListener(controller);
     }
 
     @Test
     public void countsDownAndCallsCycleEndListener() throws Exception
     {
         int numTicks = 10;
-        PomodoroController controller = PomodoroController.createController(mock(CycleTimer.class));
         CycleEndListener cycleEndListener = mock(CycleEndListener.class);
         controller.addCycleEndListener(cycleEndListener);
-        controller.startCycle(new Cycle(Cycle.Type.WORK, numTicks, TimeUnit.SECONDS));
+        controller.startCycle(new Cycle(Cycle.Type.WORK, numTicks));
 
         for (int i = 0; i < numTicks - 1; i++)
         {
