@@ -1,9 +1,9 @@
 package com.weizilla.pomodoro.tray;
 
 import com.weizilla.pomodoro.Cycle;
+import com.weizilla.pomodoro.CycleTickListener;
 import com.weizilla.pomodoro.PomodoroController;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
-import com.weizilla.pomodoro.timer.TickListener;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TrayApp implements TickListener
+public class TrayApp implements CycleTickListener
 {
     private final PomodoroController controller;
     private BufferedImage image;
@@ -31,7 +31,7 @@ public class TrayApp implements TickListener
     public static void startApplication(PomodoroController controller)
     {
         TrayApp trayApp = new TrayApp(controller);
-        controller.addTickListener(trayApp);
+        controller.addCycleTickListener(trayApp);
     }
 
     private void createTray()
@@ -94,7 +94,6 @@ public class TrayApp implements TickListener
 
     private void start()
     {
-        count = 0;
         controller.startCycle(new Cycle(25, TimeUnit.SECONDS));
     }
 
@@ -104,9 +103,9 @@ public class TrayApp implements TickListener
     }
 
     @Override
-    public void tick()
+    public void tick(int ticksRemaining)
     {
-        drawNumber(++count);
+        drawNumber(ticksRemaining);
     }
 
     private void drawNumber(int num)

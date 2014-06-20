@@ -1,7 +1,6 @@
 package com.weizilla.pomodoro;
 
 import com.weizilla.pomodoro.timer.CycleTimer;
-import com.weizilla.pomodoro.timer.TickListener;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -40,16 +39,16 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void addTickListener() throws Exception
+    public void addCycleTickListener() throws Exception
     {
         CycleTimer cycleTimer = mock(CycleTimer.class);
         PomodoroController controller = PomodoroController.createController(cycleTimer);
 
-        TickListener listener = mock(TickListener.class);
+        CycleTickListener listener = mock(CycleTickListener.class);
 
-        controller.addTickListener(listener);
+        controller.addCycleTickListener(listener);
 
-        assertTrue(controller.tickListeners.contains(listener));
+        assertTrue(controller.cycleTickListeners.contains(listener));
     }
 
     @Test
@@ -64,16 +63,20 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void tickNotifiesListeners() throws Exception
+    public void tickNotifiesListenersWithRemainingTime() throws Exception
     {
-        TickListener listener = mock(TickListener.class);
+        CycleTickListener listener = mock(CycleTickListener.class);
 
         PomodoroController controller = PomodoroController.createController(mock(CycleTimer.class));
-        controller.addTickListener(listener);
+        controller.addCycleTickListener(listener);
 
-        controller.tick();
+        controller.startCycle(new Cycle(10, TimeUnit.MINUTES));
 
-        verify(listener).tick();
+        for (int i = 9; i >= 0; i--)
+        {
+            controller.tick();
+            verify(listener).tick(i);
+        }
     }
 
     @Test
