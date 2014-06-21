@@ -3,6 +3,7 @@ package com.weizilla.pomodoro;
 import com.weizilla.pomodoro.cycle.Cycle;
 import com.weizilla.pomodoro.cycle.CycleEndListener;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
+import com.weizilla.pomodoro.cycle.CycleWorkflow;
 import com.weizilla.pomodoro.timer.CycleTimer;
 import com.weizilla.pomodoro.timer.TickListener;
 
@@ -14,32 +15,62 @@ public class PomodoroController implements TickListener
 {
     protected final List<CycleTickListener> cycleTickListeners = new ArrayList<>();
     protected final List<CycleEndListener> cycleEndListeners = new ArrayList<>();
-    private final CycleTimer cycleTimer;
+    private final CycleTimer timer;
+    private final CycleWorkflow workflow;
     private final TimeUnit timeUnit;
     private int ticksRemaining;
+    private Cycle currentCycle;
 
-    private PomodoroController(CycleTimer cycleTimer, TimeUnit timeUnit)
+    private PomodoroController(CycleTimer timer, CycleWorkflow workflow, TimeUnit timeUnit)
     {
-        this.cycleTimer = cycleTimer;
+        this.timer = timer;
+        this.workflow = workflow;
         this.timeUnit = timeUnit;
     }
 
-    public static PomodoroController createController(CycleTimer cycleTimer, TimeUnit timeUnit)
+    public static PomodoroController createController(CycleTimer timer, CycleWorkflow workflow, TimeUnit timeUnit)
     {
-        PomodoroController controller = new PomodoroController(cycleTimer, timeUnit);
-        cycleTimer.addTickListener(controller);
+        PomodoroController controller = new PomodoroController(timer, workflow, timeUnit);
+        timer.addTickListener(controller);
         return controller;
     }
 
-    public void startCycle(Cycle cycle)
+    public void startCycle(Cycle.Type type)
     {
-        ticksRemaining = cycle.getNumTicks();
-        cycleTimer.startCycle(timeUnit);
+        currentCycle = workflow.createCycle(type);
+        ticksRemaining = currentCycle.getNumTicks();
+        timer.startCycle(timeUnit);
     }
 
     public void stopCycle()
     {
-        cycleTimer.stopCycle();
+        timer.stopCycle();
+    }
+
+    @Override
+    public void tick()
+    {
+        ticksRemaining--;
+        if (ticksRemaining == 0)
+        {
+            notifyCycleEndListeners();
+            currentCycle = workflow.getNextCycle(currentCycle);
+            ticksRemaining = currentCycle.getNumTicks();
+        }
+        else
+        {
+            notifyCycleTickListeners();
+        }
+    }
+
+    public Cycle getCurrentCycle()
+    {
+        return currentCycle;
+    }
+
+    public int getTicksRemaining()
+    {
+        return ticksRemaining;
     }
 
     public void addCycleTickListener(CycleTickListener listener)
@@ -50,18 +81,6 @@ public class PomodoroController implements TickListener
     public void addCycleEndListener(CycleEndListener listener)
     {
         cycleEndListeners.add(listener);
-    }
-
-    @Override
-    public void tick()
-    {
-        ticksRemaining--;
-        notifyCycleTickListeners();
-        if (ticksRemaining == 0)
-        {
-            notifyCycleEndListeners();
-            //TODO activiate next cycle
-        }
     }
 
     private void notifyCycleTickListeners()

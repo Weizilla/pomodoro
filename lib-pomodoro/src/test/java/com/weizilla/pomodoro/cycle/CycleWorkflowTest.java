@@ -7,12 +7,12 @@ import static org.junit.Assert.assertEquals;
 
 public class CycleWorkflowTest
 {
-    private static final Cycle WORK = new Cycle(Cycle.Type.WORK, 10);
-    private static final Cycle BREAK = new Cycle(Cycle.Type.BREAK, 10);
-    private static final Cycle LONG_BREAK = new Cycle(Cycle.Type.LONG_BREAK, 10);
     private static final int NUM_WORK_TICKS = 25;
     private static final int NUM_BREAK_TICKS = 5;
     private static final int NUM_LONG_BREAK_TICKS = 20;
+    private static final Cycle WORK = new Cycle(Cycle.Type.WORK, NUM_WORK_TICKS);
+    private static final Cycle BREAK = new Cycle(Cycle.Type.BREAK, NUM_BREAK_TICKS);
+    private static final Cycle LONG_BREAK = new Cycle(Cycle.Type.LONG_BREAK, NUM_LONG_BREAK_TICKS);
 
     private CycleWorkflow workflow;
 
@@ -23,11 +23,31 @@ public class CycleWorkflowTest
     }
 
     @Test
+    public void createsWorkCycle() throws Exception
+    {
+        Cycle cycle = workflow.createCycle(Cycle.Type.WORK);
+        assertEquals(WORK, cycle);
+    }
+
+    @Test
+    public void createsBreakCycle() throws Exception
+    {
+        Cycle cycle = workflow.createCycle(Cycle.Type.BREAK);
+        assertEquals(BREAK, cycle);
+    }
+
+    @Test
+    public void createsLongBreakCycle() throws Exception
+    {
+        Cycle cycle = workflow.createCycle(Cycle.Type.LONG_BREAK);
+        assertEquals(LONG_BREAK, cycle);
+    }
+
+    @Test
     public void movesFromWorkToBreak() throws Exception
     {
         Cycle next = workflow.getNextCycle(WORK);
         assertEquals(Cycle.Type.BREAK, next.getType());
-        assertEquals(NUM_BREAK_TICKS, next.getNumTicks());
     }
 
     @Test
@@ -35,7 +55,6 @@ public class CycleWorkflowTest
     {
         Cycle next = workflow.getNextCycle(BREAK);
         assertEquals(Cycle.Type.WORK, next.getType());
-        assertEquals(NUM_WORK_TICKS, next.getNumTicks());
     }
 
     @Test
@@ -43,7 +62,6 @@ public class CycleWorkflowTest
     {
         Cycle next = workflow.getNextCycle(LONG_BREAK);
         assertEquals(Cycle.Type.WORK, next.getType());
-        assertEquals(NUM_WORK_TICKS, next.getNumTicks());
     }
 
     @Test
@@ -55,7 +73,6 @@ public class CycleWorkflowTest
             next = workflow.getNextCycle(WORK);
         }
         assertEquals(Cycle.Type.LONG_BREAK, next.getType());
-        assertEquals(NUM_LONG_BREAK_TICKS, next.getNumTicks());
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.weizilla.pomodoro.console;
 import com.weizilla.pomodoro.cycle.Cycle;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.PomodoroController;
+import com.weizilla.pomodoro.cycle.CycleWorkflow;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 
 import java.util.concurrent.Executors;
@@ -15,7 +16,8 @@ public class ConsoleApp
     {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         DefaultCycleTimer timer = new DefaultCycleTimer(executorService);
-        final PomodoroController controller = PomodoroController.createController(timer);
+        CycleWorkflow workflow = new CycleWorkflow(10, 10, 10);
+        final PomodoroController controller = PomodoroController.createController(timer, workflow, TimeUnit.SECONDS);
         controller.addCycleTickListener(new CycleTickListener()
         {
             @Override
@@ -28,6 +30,6 @@ public class ConsoleApp
                 }
             }
         });
-        controller.startCycle(new Cycle(25, TimeUnit.SECONDS));
+        controller.startCycle(Cycle.Type.WORK);
     }
 }
