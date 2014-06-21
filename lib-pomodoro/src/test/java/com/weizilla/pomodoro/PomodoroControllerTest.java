@@ -10,13 +10,14 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class PomodoroControllerTest
@@ -45,8 +46,7 @@ public class PomodoroControllerTest
     @Test
     public void controllerStartCallsWorkflowForCycleAndReturnsAsCurrentCycle() throws Exception
     {
-        controller = PomodoroController.createController(mockTimer, workflow, TIME_UNIT);
-        controller.startCycle(TEST_TYPE);
+        controller.start(TEST_TYPE);
 
         verify(workflow).createCycle(TEST_TYPE);
 
@@ -55,11 +55,74 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void controllerCallsTimerToStart() throws Exception
+    public void startCallsTimerToStart() throws Exception
     {
-        controller.startCycle(Cycle.Type.WORK);
+        controller.start(Cycle.Type.WORK);
 
         verify(mockTimer).startCycle(TIME_UNIT);
+    }
+
+    @Test
+    public void repeatedCallsToStartRestartsTimer() throws Exception
+    {
+        reset(mockTimer);
+        controller.start(Cycle.Type.WORK);
+        verify(mockTimer, times(1)).startCycle(TIME_UNIT);
+
+        reset(mockTimer);
+        controller.start(Cycle.Type.BREAK);
+        verify(mockTimer, times(1)).stopCycle();
+        verify(mockTimer, times(1)).startCycle(TIME_UNIT);
+
+        reset(mockTimer);
+        controller.start(Cycle.Type.LONG_BREAK);
+        verify(mockTimer, times(1)).stopCycle();
+        verify(mockTimer, times(1)).startCycle(TIME_UNIT);
+    }
+
+    @Test
+    public void pauseCallsTimerToStop() throws Exception
+    {
+        controller.start(TEST_TYPE);
+
+        controller.pause();
+
+        verify(mockTimer).stopCycle();
+    }
+
+    @Test
+    public void pauseCallsTimerToStartAgainIfStartedCycleBefore() throws Exception
+    {
+        controller.start(TEST_TYPE);
+
+        reset(mockTimer);
+        controller.pause();
+
+        verify(mockTimer, never()).startCycle(TIME_UNIT);
+        verify(mockTimer, times(1)).stopCycle();
+
+        reset(mockTimer);
+        controller.pause();
+
+        verify(mockTimer, times(1)).startCycle(TIME_UNIT);
+        verify(mockTimer, never()).stopCycle();
+    }
+
+    @Test
+    public void causeDoesNotCallTimerToStartIfNoCycleStartedBefore() throws Exception
+    {
+        controller.pause();
+
+        verify(mockTimer, never()).stopCycle();
+        verify(mockTimer, never()).startCycle(any(TimeUnit.class));
+    }
+
+    @Test
+    public void stopCallsTimerToStop() throws Exception
+    {
+        controller.stop();
+
+        verify(mockTimer).stopCycle();
     }
 
     @Test
@@ -83,20 +146,12 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void controllerCallsTimerToStop() throws Exception
-    {
-        controller.stopCycle();
-
-        verify(mockTimer).stopCycle();
-    }
-
-    @Test
     public void tickNotifiesListenersWithRemainingTime() throws Exception
     {
         CycleTickListener listener = mock(CycleTickListener.class);
         controller.addCycleTickListener(listener);
 
-        controller.startCycle(TEST_TYPE);
+        controller.start(TEST_TYPE);
 
         for (int i = TEST_NUM_TICKS - 1; i > 0; i--)
         {
@@ -112,7 +167,7 @@ public class PomodoroControllerTest
         CycleTickListener listener = mock(CycleTickListener.class);
         controller.addCycleTickListener(listener);
 
-        controller.startCycle(TEST_TYPE);
+        controller.start(TEST_TYPE);
 
         for (int i = 0; i < TEST_NUM_TICKS; i++)
         {
@@ -133,7 +188,7 @@ public class PomodoroControllerTest
     {
         CycleChangeListener cycleChangeListener = mock(CycleChangeListener.class);
         controller.addCycleChangeListener(cycleChangeListener);
-        controller.startCycle(TEST_TYPE);
+        controller.start(TEST_TYPE);
 
         for (int i = 0; i < TEST_NUM_TICKS - 1; i++)
         {
@@ -153,7 +208,7 @@ public class PomodoroControllerTest
         CycleWorkflow workflow = spy(new CycleWorkflowStub(TEST_CYCLE, nextCycle));
         controller = PomodoroController.createController(mockTimer, workflow, TIME_UNIT);
 
-        controller.startCycle(TEST_TYPE);
+        controller.start(TEST_TYPE);
 
         for (int i = 0; i < TEST_NUM_TICKS; i++)
         {
@@ -170,7 +225,7 @@ public class PomodoroControllerTest
         CycleWorkflow workflow = spy(new CycleWorkflowStub(TEST_CYCLE, TEST_NEXT_CYCLE));
         controller = PomodoroController.createController(mockTimer, workflow, TIME_UNIT);
 
-        controller.startCycle(TEST_TYPE);
+        controller.start(TEST_TYPE);
 
         for (int i = 0; i < TEST_NUM_TICKS; i++)
         {

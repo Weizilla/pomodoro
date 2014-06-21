@@ -26,10 +26,10 @@ public class ConsoleApp
                 System.out.println("Tick " + remainingTicks);
                 if (remainingTicks == 10)
                 {
-                    controller.stopCycle();
+                    controller.stop();
                 }
             }
         });
-        controller.startCycle(Cycle.Type.WORK);
+        controller.start(Cycle.Type.WORK);
     }
 }

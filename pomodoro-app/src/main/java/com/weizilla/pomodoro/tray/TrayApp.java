@@ -80,6 +80,17 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
         });
         menu.add(start);
 
+        MenuItem pause = new MenuItem("Pause");
+        pause.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                pause();
+            }
+        });
+        menu.add(pause);
+
         MenuItem stop = new MenuItem("Stop");
         stop.addActionListener(new ActionListener()
         {
@@ -108,12 +119,17 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
 
     private void start()
     {
-        controller.startCycle(Cycle.Type.WORK);
+        controller.start(Cycle.Type.WORK);
+    }
+
+    private void pause()
+    {
+        controller.pause();
     }
 
     private void stop()
     {
-        controller.stopCycle();
+        controller.stop();
     }
 
     @Override

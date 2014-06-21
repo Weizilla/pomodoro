@@ -20,6 +20,8 @@ public class PomodoroController implements TimerTickListener
     private final TimeUnit timeUnit;
     private int remainingTicks;
     private Cycle currentCycle;
+    private boolean started;
+    private boolean paused;
 
     private PomodoroController(CycleTimer timer, CycleWorkflow workflow, TimeUnit timeUnit)
     {
@@ -35,15 +37,63 @@ public class PomodoroController implements TimerTickListener
         return controller;
     }
 
-    public void startCycle(Cycle.Type type)
+    public void start(Cycle.Type type)
+    {
+        if (started)
+        {
+            stopWorkflow();
+        }
+
+        startWorkflow(type);
+    }
+
+    public void pause()
+    {
+        if (started)
+        {
+            if (paused)
+            {
+                unpauseWorkflow();
+            }
+            else
+            {
+                pauseWorkflow();
+            }
+        }
+    }
+
+    public void stop()
+    {
+        stopWorkflow();
+    }
+
+    private void startWorkflow(Cycle.Type type)
     {
         currentCycle = workflow.createCycle(type);
         remainingTicks = currentCycle.getNumTicks();
+        started = true;
+        paused = false;
         timer.startCycle(timeUnit);
     }
 
-    public void stopCycle()
+    private void pauseWorkflow()
     {
+        paused = true;
+        timer.stopCycle();
+    }
+
+    private void unpauseWorkflow()
+    {
+        paused = false;
+        timer.startCycle(timeUnit);
+    }
+
+    private void stopWorkflow()
+    {
+        currentCycle = null;
+        remainingTicks = 0;
+        started = false;
+        paused = false;
         timer.stopCycle();
     }
 
