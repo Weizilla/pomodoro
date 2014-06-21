@@ -2,5 +2,5 @@ package com.weizilla.pomodoro.cycle;
 
 public interface CycleTickListener
 {
-    void tick(int ticksRemaining);
+    void tick(int remainingTicks);
 }

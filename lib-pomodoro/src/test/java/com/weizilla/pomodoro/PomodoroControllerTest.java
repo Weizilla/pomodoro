@@ -1,7 +1,7 @@
 package com.weizilla.pomodoro;
 
 import com.weizilla.pomodoro.cycle.Cycle;
-import com.weizilla.pomodoro.cycle.CycleEndListener;
+import com.weizilla.pomodoro.cycle.CycleChangeListener;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.cycle.CycleWorkflow;
 import com.weizilla.pomodoro.timer.CycleTimer;
@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -50,7 +51,7 @@ public class PomodoroControllerTest
         verify(workflow).createCycle(TEST_TYPE);
 
         assertSame(TEST_CYCLE, controller.getCurrentCycle());
-        assertSame(TEST_NUM_TICKS, controller.getTicksRemaining());
+        assertSame(TEST_NUM_TICKS, controller.getRemainingTicks());
     }
 
     @Test
@@ -62,13 +63,13 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void addCycleEndListener() throws Exception
+    public void addCycleChangeListener() throws Exception
     {
-        CycleEndListener listener = mock(CycleEndListener.class);
+        CycleChangeListener listener = mock(CycleChangeListener.class);
 
-        controller.addCycleEndListener(listener);
+        controller.addCycleChangeListener(listener);
 
-        assertTrue(controller.cycleEndListeners.contains(listener));
+        assertTrue(controller.cycleChangeListeners.contains(listener));
     }
 
     @Test
@@ -128,21 +129,21 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void countsDownAndCallsCycleEndListener() throws Exception
+    public void countsDownAndCallsCycleChangeListener() throws Exception
     {
-        CycleEndListener cycleEndListener = mock(CycleEndListener.class);
-        controller.addCycleEndListener(cycleEndListener);
+        CycleChangeListener cycleChangeListener = mock(CycleChangeListener.class);
+        controller.addCycleChangeListener(cycleChangeListener);
         controller.startCycle(TEST_TYPE);
 
         for (int i = 0; i < TEST_NUM_TICKS - 1; i++)
         {
             controller.tick();
         }
-        verify(cycleEndListener, never()).cycleEnd();
+        verify(cycleChangeListener, never()).cycleChange(anyInt());
 
         controller.tick();
 
-        verify(cycleEndListener).cycleEnd();
+        verify(cycleChangeListener).cycleChange(TEST_NEXT_NUM_TICKS);
     }
 
     @Test
@@ -164,7 +165,7 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void resetsTicksRemainingWhenStartingNextCycle() throws Exception
+    public void resetsRemainingTicksWhenStartingNextCycle() throws Exception
     {
         CycleWorkflow workflow = spy(new CycleWorkflowStub(TEST_CYCLE, TEST_NEXT_CYCLE));
         controller = PomodoroController.createController(mockTimer, workflow, TIME_UNIT);
@@ -178,7 +179,7 @@ public class PomodoroControllerTest
 
         verify(workflow).getNextCycle(TEST_CYCLE);
         assertSame(TEST_NEXT_CYCLE, controller.getCurrentCycle());
-        assertSame(TEST_NEXT_NUM_TICKS, controller.getTicksRemaining());
+        assertSame(TEST_NEXT_NUM_TICKS, controller.getRemainingTicks());
     }
 
     private static class CycleWorkflowStub extends CycleWorkflow

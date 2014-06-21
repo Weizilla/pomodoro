@@ -21,10 +21,10 @@ public class ConsoleApp
         controller.addCycleTickListener(new CycleTickListener()
         {
             @Override
-            public void tick(int ticksRemaining)
+            public void tick(int remainingTicks)
             {
-                System.out.println("Tick " + ticksRemaining);
-                if (ticksRemaining == 10)
+                System.out.println("Tick " + remainingTicks);
+                if (remainingTicks == 10)
                 {
                     controller.stopCycle();
                 }
