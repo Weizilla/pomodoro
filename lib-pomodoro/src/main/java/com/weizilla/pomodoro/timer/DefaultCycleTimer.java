@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DefaultCycleTimer implements CycleTimer, Runnable
 {
-    protected final List<TickListener> listeners = new ArrayList<>();
+    protected final List<TimerTickListener> listeners = new ArrayList<>();
     private final ScheduledExecutorService service;
     protected ScheduledFuture<?> future;
 
@@ -31,14 +31,14 @@ public class DefaultCycleTimer implements CycleTimer, Runnable
 
     private void notifyListeners()
     {
-        for (TickListener listener : listeners)
+        for (TimerTickListener listener : listeners)
         {
             listener.tick();
         }
     }
 
     @Override
-    public void addTickListener(TickListener listener)
+    public void addTickListener(TimerTickListener listener)
     {
         listeners.add(listener);
     }

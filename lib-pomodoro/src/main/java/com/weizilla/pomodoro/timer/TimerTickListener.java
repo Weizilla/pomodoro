@@ -1,6 +1,6 @@
 package com.weizilla.pomodoro.timer;
 
-public interface TickListener
+public interface TimerTickListener
 {
     void tick();
 }

@@ -5,13 +5,13 @@ import com.weizilla.pomodoro.cycle.CycleChangeListener;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.cycle.CycleWorkflow;
 import com.weizilla.pomodoro.timer.CycleTimer;
-import com.weizilla.pomodoro.timer.TickListener;
+import com.weizilla.pomodoro.timer.TimerTickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class PomodoroController implements TickListener
+public class PomodoroController implements TimerTickListener
 {
     protected final List<CycleTickListener> cycleTickListeners = new ArrayList<>();
     protected final List<CycleChangeListener> cycleChangeListeners = new ArrayList<>();

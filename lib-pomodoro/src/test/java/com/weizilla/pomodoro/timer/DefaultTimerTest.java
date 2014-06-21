@@ -16,7 +16,7 @@ public class DefaultTimerTest
     @Test
     public void addsListener() throws Exception
     {
-        TickListener listener = mock(TickListener.class);
+        TimerTickListener listener = mock(TimerTickListener.class);
         DefaultCycleTimer timer = new DefaultCycleTimer(mock(ScheduledExecutorService.class));
 
         timer.addTickListener(listener);
@@ -27,7 +27,7 @@ public class DefaultTimerTest
     @Test
     public void updatesListenerWhenRun() throws Exception
     {
-        TickListener listener = mock(TickListener.class);
+        TimerTickListener listener = mock(TimerTickListener.class);
         DefaultCycleTimer timer = new DefaultCycleTimer(mock(ScheduledExecutorService.class));
         timer.addTickListener(listener);
 
