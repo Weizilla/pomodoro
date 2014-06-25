@@ -7,6 +7,7 @@ import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.cycle.CycleWorkflow;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,8 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
     private final PomodoroController controller;
     private final BufferedImage image;
     private final TrayIcon trayIcon;
+    private final JFrame frame;
+    private final JLabel frameMessage;
     private MenuItem cycleName;
 
     private TrayApp(PomodoroController controller)
@@ -36,6 +39,12 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
         this.controller = controller;
         image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         trayIcon = new TrayIcon(image);
+
+        frame = new JFrame("Pomodoro");
+        frame.setSize(50, 100);
+        frame.setAlwaysOnTop(true);
+        frameMessage = new JLabel();
+        frame.getContentPane().add(frameMessage, BorderLayout.CENTER);
 
         createTray();
         drawNumber(0);
@@ -145,6 +154,7 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
     {
         drawNumber(remainingTicks);
         cycleName.setLabel(controller.getCurrentCycle().getType().name());
+        createMessageDialog();
     }
 
     private void drawNumber(int num)
@@ -176,6 +186,22 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
             }
         }
         return result;
+    }
+
+    private void createMessageDialog()
+    {
+        Cycle currentCycle = controller.getCurrentCycle();
+        if (currentCycle != null)
+        {
+            CycleSettings settings = CYCLE_SETTINGS.get(currentCycle.getType());
+            if (settings != null)
+            {
+                frameMessage.setText(settings.dialogMessage);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+                frame.toFront();
+            }
+        }
     }
 
     public static void main(String[] args)
