@@ -19,11 +19,12 @@ import java.util.concurrent.TimeUnit;
 
 public class TrayApp implements CycleTickListener, CycleChangeListener
 {
-    private static final Map<Cycle.Type, Color> COLORS = new EnumMap<Cycle.Type, Color>(Cycle.Type.class)
+    private static final Map<Cycle.Type, CycleSettings> CYCLE_SETTINGS =
+        new EnumMap<Cycle.Type, CycleSettings>(Cycle.Type.class)
     {{
-        put(Cycle.Type.WORK, Color.BLACK);
-        put(Cycle.Type.BREAK, Color.BLUE);
-        put(Cycle.Type.LONG_BREAK, Color.MAGENTA);
+        put(Cycle.Type.WORK, new CycleSettings(Color.BLACK, "Back to work!"));
+        put(Cycle.Type.BREAK, new CycleSettings(Color.BLUE, "Break time!"));
+        put(Cycle.Type.LONG_BREAK, new CycleSettings(Color.MAGENTA, "Long break time!"));
     }};
     private final PomodoroController controller;
     private final BufferedImage image;
@@ -168,10 +169,10 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
         Cycle currentCycle = controller.getCurrentCycle();
         if (currentCycle != null)
         {
-            Color color = COLORS.get(currentCycle.getType());
-            if (color != null)
+            CycleSettings settings = CYCLE_SETTINGS.get(currentCycle.getType());
+            if (settings != null)
             {
-                result = color;
+                result = settings.textColor;
             }
         }
         return result;
@@ -186,4 +187,17 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
         startApplication(controller);
 
     }
+
+    private static class CycleSettings
+    {
+        private Color textColor;
+        private String dialogMessage;
+
+        private CycleSettings(Color textColor, String dialogMessage)
+        {
+            this.textColor = textColor;
+            this.dialogMessage = dialogMessage;
+        }
+    }
+
 }
