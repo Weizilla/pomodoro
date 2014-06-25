@@ -59,7 +59,7 @@ public class Cycle
         result = 31 * result + numTicks;
         return result;
     }
-    
+
     @Override
     public String toString()
     {

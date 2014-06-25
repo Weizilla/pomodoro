@@ -7,18 +7,18 @@ import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.cycle.CycleWorkflow;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.text.MessageFormat;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TrayApp implements CycleTickListener, CycleChangeListener
+public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEndDialog.ResultsListener
 {
     private static final Map<Cycle.Type, CycleSettings> CYCLE_SETTINGS =
         new EnumMap<Cycle.Type, CycleSettings>(Cycle.Type.class)
@@ -30,8 +30,7 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
     private final PomodoroController controller;
     private final BufferedImage image;
     private final TrayIcon trayIcon;
-    private final JFrame frame;
-    private final JLabel frameMessage;
+    private CycleEndDialog dialog;
     private MenuItem cycleName;
 
     private TrayApp(PomodoroController controller)
@@ -40,19 +39,19 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
         image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         trayIcon = new TrayIcon(image);
 
-        frame = new JFrame("Pomodoro");
-        frame.setSize(50, 100);
-        frame.setAlwaysOnTop(true);
-        frameMessage = new JLabel();
-        frame.getContentPane().add(frameMessage, BorderLayout.CENTER);
-
         createTray();
         drawNumber(0);
+    }
+
+    private void init()
+    {
+        dialog = new CycleEndDialog(this);
     }
 
     public static void startApplication(PomodoroController controller)
     {
         TrayApp trayApp = new TrayApp(controller);
+        trayApp.init();
         controller.addCycleTickListener(trayApp);
         controller.addCycleChangeListener(trayApp);
     }
@@ -153,8 +152,19 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
     public void cycleChange(Cycle previous, Cycle next)
     {
         drawNumber(next.getNumTicks());
-        cycleName.setLabel(controller.getCurrentCycle().getType().name());
-        createMessageDialog();
+        cycleName.setLabel(next.getType().name());
+        controller.pause();
+        dialog.showMessage(MessageFormat.format("{0} cycle ended. Continue with {1}?", previous.getType(), next.getType()));
+    }
+
+    @Override
+    public void dialogResult(CycleEndDialog.Result result)
+    {
+        if (result == CycleEndDialog.Result.YES)
+        {
+            controller.pause();
+        }
+        dialog.setVisible(false);
     }
 
     private void drawNumber(int num)
@@ -186,22 +196,6 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
             }
         }
         return result;
-    }
-
-    private void createMessageDialog()
-    {
-        Cycle currentCycle = controller.getCurrentCycle();
-        if (currentCycle != null)
-        {
-            CycleSettings settings = CYCLE_SETTINGS.get(currentCycle.getType());
-            if (settings != null)
-            {
-                frameMessage.setText(settings.dialogMessage);
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-                frame.toFront();
-            }
-        }
     }
 
     public static void main(String[] args)
