@@ -95,6 +95,7 @@ public class PomodoroController implements TimerTickListener
         started = false;
         paused = false;
         timer.stopCycle();
+        workflow.reset();
     }
 
     @Override

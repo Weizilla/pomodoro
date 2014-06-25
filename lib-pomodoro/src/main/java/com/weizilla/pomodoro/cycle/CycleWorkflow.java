@@ -48,4 +48,9 @@ public class CycleWorkflow
     {
         return new Cycle(type, numTicks.get(type));
     }
+
+    public void reset()
+    {
+        numBreaks = 0;
+    }
 }

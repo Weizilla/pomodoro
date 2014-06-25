@@ -118,11 +118,12 @@ public class PomodoroControllerTest
     }
 
     @Test
-    public void stopCallsTimerToStop() throws Exception
+    public void stopCallsTimerToStopAndResetsWorkflow() throws Exception
     {
         controller.stop();
 
         verify(mockTimer).stopCycle();
+        verify(workflow).reset();
     }
 
     @Test

@@ -67,12 +67,10 @@ public class CycleWorkflowTest
     @Test
     public void forthBreakIsLongBreak() throws Exception
     {
-        Cycle next = null;
-        for (int i = 0; i < 4; i++)
-        {
-            next = workflow.getNextCycle(WORK);
-        }
-        assertEquals(Cycle.Type.LONG_BREAK, next.getType());
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(LONG_BREAK, workflow.getNextCycle(WORK));
     }
 
     @Test
@@ -92,5 +90,18 @@ public class CycleWorkflowTest
             assertEquals(expected, cycle.getType());
             cycle = workflow.getNextCycle(cycle);
         }
+    }
+
+    @Test
+    public void resetsWorkflow() throws Exception
+    {
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        workflow.reset();
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(BREAK, workflow.getNextCycle(WORK));
+        assertEquals(LONG_BREAK, workflow.getNextCycle(WORK));
     }
 }
