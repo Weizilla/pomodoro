@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -29,7 +29,8 @@ public class PomodoroControllerTest
     private static final Cycle TEST_CYCLE = new Cycle(TEST_TYPE, TEST_NUM_TICKS);
 
     private static final int TEST_NEXT_NUM_TICKS = 5;
-    private static final Cycle TEST_NEXT_CYCLE = new Cycle(Cycle.Type.BREAK, TEST_NEXT_NUM_TICKS);
+    private static final Cycle.Type TEST_NEXT_TYPE = Cycle.Type.BREAK;
+    private static final Cycle TEST_NEXT_CYCLE = new Cycle(TEST_NEXT_TYPE, TEST_NEXT_NUM_TICKS);
 
     private CycleTimer mockTimer;
     private CycleWorkflow workflow;
@@ -195,11 +196,11 @@ public class PomodoroControllerTest
         {
             controller.tick();
         }
-        verify(cycleChangeListener, never()).cycleChange(anyInt());
+        verify(cycleChangeListener, never()).cycleChange(any(Cycle.class), any(Cycle.class));
 
         controller.tick();
 
-        verify(cycleChangeListener).cycleChange(TEST_NEXT_NUM_TICKS);
+        verify(cycleChangeListener).cycleChange(TEST_CYCLE, TEST_NEXT_CYCLE);
     }
 
     @Test

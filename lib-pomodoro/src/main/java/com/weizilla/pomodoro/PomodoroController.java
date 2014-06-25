@@ -104,9 +104,10 @@ public class PomodoroController implements TimerTickListener
         remainingTicks--;
         if (remainingTicks == 0)
         {
+            Cycle previous = currentCycle;
             currentCycle = workflow.getNextCycle(currentCycle);
             remainingTicks = currentCycle.getNumTicks();
-            notifyCycleChangeListeners();
+            notifyCycleChangeListeners(previous, currentCycle);
         }
         else
         {
@@ -142,11 +143,11 @@ public class PomodoroController implements TimerTickListener
         }
     }
 
-    private void notifyCycleChangeListeners()
+    private void notifyCycleChangeListeners(Cycle previous, Cycle next)
     {
         for (CycleChangeListener listener : cycleChangeListeners)
         {
-            listener.cycleChange(remainingTicks);
+            listener.cycleChange(previous, next);
         }
     }
 }

@@ -150,9 +150,9 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
     }
 
     @Override
-    public void cycleChange(int remainingTicks)
+    public void cycleChange(Cycle previous, Cycle next)
     {
-        drawNumber(remainingTicks);
+        drawNumber(next.getNumTicks());
         cycleName.setLabel(controller.getCurrentCycle().getType().name());
         createMessageDialog();
     }
@@ -211,7 +211,6 @@ public class TrayApp implements CycleTickListener, CycleChangeListener
         CycleWorkflow workflow = new CycleWorkflow(3, 4, 5);
         PomodoroController controller = PomodoroController.createController(timer, workflow, TimeUnit.SECONDS);
         startApplication(controller);
-
     }
 
     private static class CycleSettings
