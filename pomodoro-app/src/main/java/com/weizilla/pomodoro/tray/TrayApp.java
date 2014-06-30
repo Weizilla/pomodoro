@@ -202,8 +202,8 @@ public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEnd
     {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         DefaultCycleTimer timer = new DefaultCycleTimer(executorService);
-        CycleWorkflow workflow = new CycleWorkflow(3, 4, 5);
-        PomodoroController controller = PomodoroController.createController(timer, workflow, TimeUnit.SECONDS);
+        CycleWorkflow workflow = new CycleWorkflow(25, 5, 15);
+        PomodoroController controller = PomodoroController.createController(timer, workflow, TimeUnit.MINUTES);
         startApplication(controller);
     }
 
