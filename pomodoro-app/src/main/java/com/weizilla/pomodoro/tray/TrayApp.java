@@ -36,7 +36,7 @@ public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEnd
     private TrayApp(PomodoroController controller)
     {
         this.controller = controller;
-        image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        image = new BufferedImage(20, 16, BufferedImage.TYPE_INT_ARGB);
         trayIcon = new TrayIcon(image);
 
         createTray();
