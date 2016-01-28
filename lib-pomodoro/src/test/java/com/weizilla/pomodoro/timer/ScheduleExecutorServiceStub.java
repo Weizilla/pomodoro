@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
 
 public class ScheduleExecutorServiceStub implements ScheduledExecutorService
 {
-    private ScheduledFuture<?> future;
+    private final ScheduledFuture<?> future;
 
     public ScheduleExecutorServiceStub(ScheduledFuture<?> future)
     {
@@ -22,14 +22,12 @@ public class ScheduleExecutorServiceStub implements ScheduledExecutorService
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit)
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)
     {
-        //TODO Auto-generated
         return null;
     }
 
@@ -42,98 +40,82 @@ public class ScheduleExecutorServiceStub implements ScheduledExecutorService
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public void shutdown()
     {
-        //TODO Auto-generated
-
     }
 
     @Override
     public List<Runnable> shutdownNow()
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public boolean isShutdown()
     {
-        //TODO Auto-generated
         return false;
     }
 
     @Override
     public boolean isTerminated()
     {
-        //TODO Auto-generated
         return false;
     }
 
     @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException
     {
-        //TODO Auto-generated
         return false;
     }
 
     @Override
     public <T> Future<T> submit(Callable<T> task)
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public <T> Future<T> submit(Runnable task, T result)
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public Future<?> submit(Runnable task)
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException
     {
-        //TODO Auto-generated
         return null;
     }
 
     @Override
     public void execute(Runnable command)
     {
-        //TODO Auto-generated
-
     }
 }

@@ -2,14 +2,14 @@ package com.weizilla.pomodoro.tray;
 
 import com.weizilla.pomodoro.PomodoroController;
 import com.weizilla.pomodoro.cycle.Cycle;
+import com.weizilla.pomodoro.cycle.Cycle.Type;
 import com.weizilla.pomodoro.cycle.CycleChangeListener;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.cycle.CycleWorkflow;
+import com.weizilla.pomodoro.timer.CycleTimer;
 import com.weizilla.pomodoro.timer.DefaultCycleTimer;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.text.MessageFormat;
 import java.util.EnumMap;
@@ -20,13 +20,14 @@ import java.util.concurrent.TimeUnit;
 
 public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEndDialog.ResultsListener
 {
-    private static final Map<Cycle.Type, CycleSettings> CYCLE_SETTINGS =
-        new EnumMap<Cycle.Type, CycleSettings>(Cycle.Type.class)
-    {{
-        put(Cycle.Type.WORK, new CycleSettings(Color.WHITE, "Back to work!"));
-        put(Cycle.Type.BREAK, new CycleSettings(Color.BLUE, "Break time!"));
-        put(Cycle.Type.LONG_BREAK, new CycleSettings(Color.MAGENTA, "Long break time!"));
-    }};
+    private static final Map<Cycle.Type, CycleSettings> CYCLE_SETTINGS = new EnumMap<>(Type.class);
+    static
+    {
+        CYCLE_SETTINGS.put(Type.LONG_BREAK, new CycleSettings(Color.MAGENTA, "Long break time!"));
+        CYCLE_SETTINGS.put(Type.BREAK, new CycleSettings(Color.BLUE, "Break time!"));
+        CYCLE_SETTINGS.put(Type.WORK, new CycleSettings(Color.WHITE, "Back to work!"));
+    }
+
     private final PomodoroController controller;
     private final BufferedImage image;
     private final TrayIcon trayIcon;
@@ -79,49 +80,20 @@ public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEnd
         menu.add(cycleName);
 
         MenuItem start = new MenuItem("Start");
-        start.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                start();
-            }
-        });
+        start.addActionListener(e -> start());
         menu.add(start);
 
         MenuItem pause = new MenuItem("Pause");
-        pause.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                pause();
-            }
-        });
+        pause.addActionListener(e -> pause());
         menu.add(pause);
 
         MenuItem stop = new MenuItem("Stop");
-        stop.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                stop();
-            }
-        });
+        stop.addActionListener(e -> stop());
         menu.add(stop);
 
         MenuItem quit = new MenuItem("Quit");
-        quit.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                System.exit(0);
-            }
-        });
+        quit.addActionListener(e -> System.exit(0));
         menu.add(quit);
-
 
         return menu;
     }
@@ -201,7 +173,7 @@ public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEnd
     public static void main(String[] args)
     {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        DefaultCycleTimer timer = new DefaultCycleTimer(executorService);
+        CycleTimer timer = new DefaultCycleTimer(executorService);
         CycleWorkflow workflow = new CycleWorkflow(25, 5, 15);
         PomodoroController controller = PomodoroController.createController(timer, workflow, TimeUnit.MINUTES);
         startApplication(controller);

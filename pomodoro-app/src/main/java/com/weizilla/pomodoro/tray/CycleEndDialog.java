@@ -1,9 +1,10 @@
 package com.weizilla.pomodoro.tray;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class CycleEndDialog extends JFrame
 {
@@ -31,24 +32,10 @@ public class CycleEndDialog extends JFrame
         JButton yes = new JButton("Yes");
         buttons.add(yes);
         yes.setSelected(true);
-        yes.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                returnResults(Result.YES);
-            }
-        });
+        yes.addActionListener(e -> returnResults(Result.YES));
 
         JButton no = new JButton("No");
-        no.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                returnResults(Result.NO);
-            }
-        });
+        no.addActionListener(e -> returnResults(Result.NO));
         buttons.add(no);
     }
 

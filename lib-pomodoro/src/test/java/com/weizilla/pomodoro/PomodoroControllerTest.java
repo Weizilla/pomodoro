@@ -1,6 +1,7 @@
 package com.weizilla.pomodoro;
 
 import com.weizilla.pomodoro.cycle.Cycle;
+import com.weizilla.pomodoro.cycle.Cycle.Type;
 import com.weizilla.pomodoro.cycle.CycleChangeListener;
 import com.weizilla.pomodoro.cycle.CycleTickListener;
 import com.weizilla.pomodoro.cycle.CycleWorkflow;
@@ -25,11 +26,11 @@ public class PomodoroControllerTest
     private static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
 
     private static final int TEST_NUM_TICKS = 10;
-    private static final Cycle.Type TEST_TYPE = Cycle.Type.WORK;
+    private static final Type TEST_TYPE = Type.WORK;
     private static final Cycle TEST_CYCLE = new Cycle(TEST_TYPE, TEST_NUM_TICKS);
 
     private static final int TEST_NEXT_NUM_TICKS = 5;
-    private static final Cycle.Type TEST_NEXT_TYPE = Cycle.Type.BREAK;
+    private static final Type TEST_NEXT_TYPE = Type.BREAK;
     private static final Cycle TEST_NEXT_CYCLE = new Cycle(TEST_NEXT_TYPE, TEST_NEXT_NUM_TICKS);
 
     private CycleTimer mockTimer;
@@ -58,7 +59,7 @@ public class PomodoroControllerTest
     @Test
     public void startCallsTimerToStart() throws Exception
     {
-        controller.start(Cycle.Type.WORK);
+        controller.start(Type.WORK);
 
         verify(mockTimer).startCycle(TIME_UNIT);
     }
@@ -67,16 +68,16 @@ public class PomodoroControllerTest
     public void repeatedCallsToStartRestartsTimer() throws Exception
     {
         reset(mockTimer);
-        controller.start(Cycle.Type.WORK);
+        controller.start(Type.WORK);
         verify(mockTimer, times(1)).startCycle(TIME_UNIT);
 
         reset(mockTimer);
-        controller.start(Cycle.Type.BREAK);
+        controller.start(Type.BREAK);
         verify(mockTimer, times(1)).stopCycle();
         verify(mockTimer, times(1)).startCycle(TIME_UNIT);
 
         reset(mockTimer);
-        controller.start(Cycle.Type.LONG_BREAK);
+        controller.start(Type.LONG_BREAK);
         verify(mockTimer, times(1)).stopCycle();
         verify(mockTimer, times(1)).startCycle(TIME_UNIT);
     }
@@ -206,7 +207,7 @@ public class PomodoroControllerTest
     @Test
     public void callsWorkflowForNextCycleAndSetsItWhenCycleEnds() throws Exception
     {
-        Cycle nextCycle = new Cycle(Cycle.Type.BREAK, 5);
+        Cycle nextCycle = new Cycle(Type.BREAK, 5);
         CycleWorkflow workflow = spy(new CycleWorkflowStub(TEST_CYCLE, nextCycle));
         controller = PomodoroController.createController(mockTimer, workflow, TIME_UNIT);
 
@@ -241,8 +242,8 @@ public class PomodoroControllerTest
 
     private static class CycleWorkflowStub extends CycleWorkflow
     {
-        private Cycle cycle;
-        private Cycle nextCycle;
+        private final Cycle cycle;
+        private final Cycle nextCycle;
 
         public CycleWorkflowStub(Cycle cycle, Cycle nextCycle)
         {
@@ -252,7 +253,7 @@ public class PomodoroControllerTest
         }
 
         @Override
-        public Cycle createCycle(Cycle.Type type)
+        public Cycle createCycle(Type type)
         {
             return cycle;
         }
