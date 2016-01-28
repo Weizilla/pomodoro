@@ -23,7 +23,7 @@ public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEnd
     private static final Map<Cycle.Type, CycleSettings> CYCLE_SETTINGS =
         new EnumMap<Cycle.Type, CycleSettings>(Cycle.Type.class)
     {{
-        put(Cycle.Type.WORK, new CycleSettings(Color.BLACK, "Back to work!"));
+        put(Cycle.Type.WORK, new CycleSettings(Color.WHITE, "Back to work!"));
         put(Cycle.Type.BREAK, new CycleSettings(Color.BLUE, "Break time!"));
         put(Cycle.Type.LONG_BREAK, new CycleSettings(Color.MAGENTA, "Long break time!"));
     }};
@@ -185,7 +185,7 @@ public class TrayApp implements CycleTickListener, CycleChangeListener, CycleEnd
 
     private Color getColor()
     {
-        Color result = Color.BLACK;
+        Color result = Color.WHITE;
         Cycle currentCycle = controller.getCurrentCycle();
         if (currentCycle != null)
         {
