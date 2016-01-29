@@ -1,1 +1,1 @@
-mvn clean install && java -Dapple.awt.UIElement=true -jar pomodoro-app/target/pomodoro-app.jar 
+mvn clean install && ./run-target
